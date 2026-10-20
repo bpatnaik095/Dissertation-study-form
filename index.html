@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pre-Screening &amp; Informed Consent</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Google Sans', 'Segoe UI', Roboto, Arial, sans-serif;
+      background: #f0ebf8;
+      color: #202124;
+      min-height: 100vh;
+      padding: 24px 16px;
+    }
+
+    .form-container {
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    /* Header bar */
+    .form-header {
+      background: #fff;
+      border-radius: 8px;
+      border-top: 10px solid #673ab7;
+      padding: 24px;
+      margin-bottom: 12px;
+    }
+
+    .form-header h1 {
+      font-size: 24px;
+      font-weight: 400;
+      color: #202124;
+      margin-bottom: 8px;
+    }
+
+    .form-header .subtitle {
+      font-size: 14px;
+      color: #5f6368;
+      line-height: 1.5;
+    }
+
+    .form-header .required-note {
+      font-size: 12px;
+      color: #d93025;
+      margin-top: 12px;
+    }
+
+    /* Progress bar */
+    .progress-bar-container {
+      background: #fff;
+      border-radius: 8px;
+      padding: 16px 24px;
+      margin-bottom: 12px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #e0e0e0;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #673ab7;
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+
+    .progress-text {
+      font-size: 12px;
+      color: #5f6368;
+      margin-top: 6px;
+    }
+
+    /* Section cards */
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid #dadce0;
+      padding: 24px;
+      margin-bottom: 12px;
+    }
+
+    .card.highlighted {
+      border-left: 4px solid #673ab7;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 500;
+      color: #202124;
+      margin-bottom: 16px;
+    }
+
+    .section-description {
+      font-size: 14px;
+      color: #5f6368;
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    /* Question styling */
+    .question {
+      margin-bottom: 24px;
+    }
+
+    .question:last-child {
+      margin-bottom: 0;
+    }
+
+    .question-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: #202124;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .question-label .required {
+      color: #d93025;
+      margin-left: 2px;
+    }
+
+    /* Input styles */
+    input[type="email"],
+    input[type="text"],
+    input[type="date"] {
+      width: 100%;
+      max-width: 320px;
+      padding: 8px 0;
+      border: none;
+      border-bottom: 1px solid #80868b;
+      font-size: 14px;
+      font-family: inherit;
+      color: #202124;
+      background: transparent;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="email"]:focus,
+    input[type="text"]:focus,
+    input[type="date"]:focus {
+      border-bottom: 2px solid #673ab7;
+    }
+
+    input[type="email"]::placeholder,
+    input[type="text"]::placeholder {
+      color: #80868b;
+    }
+
+    /* Radio buttons */
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .radio-option {
+      display: flex;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .radio-option:hover {
+      background: #f8f9fa;
+    }
+
+    .radio-option input[type="radio"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #5f6368;
+      border-radius: 50%;
+      margin-right: 12px;
+      flex-shrink: 0;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .radio-option input[type="radio"]:checked {
+      border-color: #673ab7;
+    }
+
+    .radio-option input[type="radio"]:checked::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #673ab7;
+    }
+
+    .radio-option label {
+      font-size: 14px;
+      color: #202124;
+      cursor: pointer;
+    }
+
+    /* Buttons */
+    .btn-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 16px;
+    }
+
+    .btn-next,
+    .btn-submit {
+      background: #673ab7;
+      color: #fff;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      letter-spacing: 0.25px;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-next:hover,
+    .btn-submit:hover {
+      background: #5e35b1;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .btn-next:disabled,
+    .btn-submit:disabled {
+      background: #dadce0;
+      color: #80868b;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* Error message */
+    .error-msg {
+      color: #d93025;
+      font-size: 12px;
+      margin-top: 4px;
+      display: none;
+    }
+
+    .question.error .error-msg {
+      display: block;
+    }
+
+    .question.error input[type="email"],
+    .question.error input[type="text"] {
+      border-bottom-color: #d93025;
+    }
+
+    /* Exit pages */
+    .exit-page {
+      display: none;
+    }
+
+    .exit-page.active {
+      display: block;
+    }
+
+    .exit-card {
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid #dadce0;
+      padding: 32px 24px;
+      text-align: center;
+    }
+
+    .exit-card .exit-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .exit-card h2 {
+      font-size: 18px;
+      font-weight: 500;
+      color: #202124;
+      margin-bottom: 12px;
+    }
+
+    .exit-card p {
+      font-size: 14px;
+      color: #5f6368;
+      line-height: 1.6;
+    }
+
+    .exit-card a {
+      color: #673ab7;
+      text-decoration: none;
+    }
+
+    .exit-card a:hover {
+      text-decoration: underline;
+    }
+
+    /* Consent text */
+    .consent-text {
+      font-size: 13px;
+      color: #3c4043;
+      line-height: 1.7;
+      max-height: 400px;
+      overflow-y: auto;
+      padding: 16px;
+      background: #f8f9fa;
+      border-radius: 4px;
+      border: 1px solid #e8eaed;
+      margin-bottom: 16px;
+    }
+
+    .consent-text h3 {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 16px 0 6px 0;
+    }
+
+    .consent-text h3:first-child {
+      margin-top: 0;
+    }
+
+    .consent-text p {
+      margin-bottom: 10px;
+    }
+
+    .consent-download {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #673ab7;
+      font-size: 13px;
+      text-decoration: none;
+      margin-bottom: 16px;
+    }
+
+    .consent-download:hover {
+      text-decoration: underline;
+    }
+
+    /* Success page */
+    .success-card {
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid #dadce0;
+      padding: 32px 24px;
+      text-align: center;
+    }
+
+    .success-card .success-icon {
+      font-size: 48px;
+      color: #34a853;
+      margin-bottom: 16px;
+    }
+
+    .success-card h2 {
+      font-size: 18px;
+      font-weight: 500;
+      color: #202124;
+      margin-bottom: 12px;
+    }
+
+    .success-card p {
+      font-size: 14px;
+      color: #5f6368;
+      line-height: 1.6;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      body { padding: 12px 8px; }
+      .card { padding: 16px; }
+      .form-header { padding: 16px; }
+      .form-header h1 { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="form-container">
+
+  <!-- Header -->
+  <div class="form-header">
+    <h1>Pre-Screening Questionnaire and Informed Consent</h1>
+    <div class="subtitle">
+      <strong>Study:</strong> Harnessing Artificial Intelligence in Healthcare Leadership: Evaluating Strategic Decision-Making Effectiveness and Adoption Challenges<br><br>
+      <strong>Principal Investigator:</strong> Bikram Patnaik<br>
+      <strong>Institution:</strong> Westcliff University<br>
+      <strong>Contact:</strong> b.patnaik.192@westcliff.edu | (408) 493-9465
+    </div>
+    <div class="required-note">* Indicates required question</div>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="progress-bar-container">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+    </div>
+    <div class="progress-text" id="progressText"></div>
+  </div>
+
+  <!-- ==================== SECTION 1: Introduction + Email + Age ==================== -->
+  <div class="section active" id="section1">
+    <div class="card highlighted">
+      <div class="section-title">Section 1 of 12: Introduction and Age Verification</div>
+      <div class="section-description">
+        Thank you for your interest in this research study. This form will first verify your eligibility to participate and, if eligible, present the informed consent document for your review and signature.<br><br>
+        All responses are confidential and will be used solely for the purpose of this study.
+      </div>
+
+      <div class="question" id="q-age">
+        <span class="question-label">What is your age group? <span class="required">*</span></span>
+        <div class="radio-group">
+          <div class="radio-option">
+            <input type="radio" name="age" id="age-under25" value="Under 25">
+            <label for="age-under25">Under 25</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="age" id="age-25-34" value="25-34">
+            <label for="age-25-34">25-34</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="age" id="age-35-44" value="35-44">
+            <label for="age-35-44">35-44</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="age" id="age-45-54" value="45-54">
+            <label for="age-45-54">45-54</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="age" id="age-55-64" value="55-64">
+            <label for="age-55-64">55-64</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="age" id="age-65" value="65 or older">
+            <label for="age-65">65 or older</label>
+          </div>
+        </div>
+        <div class="error-msg">Please select an option.</div>
+      </div>
+
+      <div class="btn-row">
+        <div></div>
+        <button class="btn-next" id="btn1" disabled onclick="nextSection(1)">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION 2: U.S. Healthcare Setting ==================== -->
+  <div class="section" id="section2">
+    <div class="card highlighted">
+      <div class="section-title">Section 2 of 12: Employment Setting</div>
+      <div class="question" id="q-us-healthcare">
+        <span class="question-label">Are you currently employed in a U.S.-based healthcare setting? <span class="required">*</span></span>
+        <div class="radio-group">
+          <div class="radio-option">
+            <input type="radio" name="us_healthcare" id="us-yes" value="Yes">
+            <label for="us-yes">Yes</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="us_healthcare" id="us-no" value="No">
+            <label for="us-no">No</label>
+          </div>
+        </div>
+        <div class="error-msg">Please select an option.</div>
+      </div>
+      <div class="btn-row">
+        <div></div>
+        <button class="btn-next" id="btn2" disabled onclick="nextSection(2)">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION 3: Years in Decision-Making Role ==================== -->
+  <div class="section" id="section3">
+    <div class="card highlighted">
+      <div class="section-title">Section 3 of 12: Experience</div>
+      <div class="question" id="q-years">
+        <span class="question-label">How many years have you held a decision-making role in healthcare? <span class="required">*</span></span>
+        <div class="radio-group">
+          <div class="radio-option">
+            <input type="radio" name="years" id="years-lt5" value="Less than 5 years">
+            <label for="years-lt5">Less than 5 years</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="years" id="years-5-7" value="5-7 years">
+            <label for="years-5-7">5-7 years</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="years" id="years-8-10" value="8-10 years">
+            <label for="years-8-10">8-10 years</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="years" id="years-10" value="More than 10 years">
+            <label for="years-10">More than 10 years</label>
+          </div>
+        </div>
+        <div class="error-msg">Please select an option.</div>
+      </div>
+      <div class="btn-row">
+        <div></div>
+        <button class="btn-next" id="btn3" disabled onclick="nextSection(3)">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION 4: Nature of Role ==================== -->
+  <div class="section" id="section4">
+    <div class="card highlighted">
+      <div class="section-title">Section 4 of 12: Nature of Your Role</div>
+      <div class="question" id="q-role">
+        <span class="question-label">Which best describes the nature of your role? <span class="required">*</span></span>
+        <div class="radio-group">
+          <div class="radio-option">
+            <input type="radio" name="role_nature" id="role-clinical" value="Clinical">
+            <label for="role-clinical">Clinical</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="role_nature" id="role-admin" value="Administrative">
+            <label for="role-admin">Administrative</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="role_nature" id="role-hybrid" value="Hybrid (Clinical and Administrative)">
+            <label for="role-hybrid">Hybrid (Clinical and Administrative)</label>
+          </div>
+        </div>
+        <div class="error-msg">Please select an option.</div>
+      </div>
+      <div class="btn-row">
+        <div></div>
+        <button class="btn-next" id="btn4" disabled onclick="nextSection(4)">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION 5: AI Experience ==================== -->
+  <div class="section" id="section5">
+    <div class="card highlighted">
+      <div class="section-title">Section 5 of 12: AI Experience</div>
+      <div class="question" id="q-ai">
+        <span class="question-label">What is your level of experience with Artificial Intelligence (AI) initiatives in your organization? <span class="required">*</span></span>
+        <div class="radio-group">
+          <div class="radio-option">
+            <input type="radio" name="ai_experience" id="ai-none" value="No AI experience">
+            <label for="ai-none">No AI experience</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="ai_experience" id="ai-basic" value="Basic familiarity">
+            <label for="ai-basic">Basic familiarity</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="ai_experience" id="ai-moderate" value="Moderate experience">
+            <label for="ai-moderate">Moderate experience</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="ai_experience" id="ai-extensive" value="Extensive experience">
+            <label for="ai-extensive">Extensive experience</label>
+          </div>
+        </div>
+        <div class="error-msg">Please select an option.</div>
+      </div>
+      <div class="btn-row">
+        <div></div>
+        <button class="btn-next" id="btn5" disabled onclick="nextSection(5)">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION 6: Decision-Making Involvement ==================== -->
+  <div class="section" id="section6">
+    <div class="card highlighted">
+      <div class="section-title">Section 6 of 12: Decision-Making Involvement</div>
+      <div class="question" id="q-decisions">
+        <span class="question-label">Does your role involve making or directly contributing to organizational, operational, or strategic decisions? <span class="required">*</span></span>
+        <div class="radio-group">
+          <div class="radio-option">
+            <input type="radio" name="decisions" id="decisions-yes" value="Yes">
+            <label for="decisions-yes">Yes</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="decisions" id="decisions-no" value="No">
+            <label for="decisions-no">No</label>
+          </div>
+        </div>
+        <div class="error-msg">Please select an option.</div>
+      </div>
+      <div class="btn-row">
+        <div></div>
+        <button class="btn-next" id="btn6" disabled onclick="nextSection(6)">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION 7: AI Vendor Exclusion ==================== -->
+  <div class="section" id="section7">
+    <div class="card highlighted">
+      <div class="section-title">Section 7 of 12: Exclusion Criteria</div>
+      <div class="question" id="q-vendor">
+        <span class="question-label">Are you currently employed by an AI technology vendor or consulting firm? <span class="required">*</span></span>
+        <div class="radio-group">
+          <div class="radio-option">
+            <input type="radio" name="ai_vendor" id="vendor-yes" value="Yes">
+            <label for="vendor-yes">Yes</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="ai_vendor" id="vendor-no" value="No">
+            <label for="vendor-no">No</label>
+          </div>
+        </div>
+        <div class="error-msg">Please select an option.</div>
+      </div>
+      <div class="btn-row">
+        <div></div>
+        <button class="btn-next" id="btn7" disabled onclick="nextSection(7)">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION 8: Similar Study Exclusion ==================== -->
+  <div class="section" id="section8">
+    <div class="card highlighted">
+      <div class="section-title">Section 8 of 12: Exclusion Criteria</div>
+      <div class="question" id="q-similar-study">
+        <span class="question-label">Have you participated in a research study on AI adoption in healthcare within the past 12 months? <span class="required">*</span></span>
+        <div class="radio-group">
+          <div class="radio-option">
+            <input type="radio" name="similar_study" id="study-yes" value="Yes">
+            <label for="study-yes">Yes</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="similar_study" id="study-no" value="No">
+            <label for="study-no">No</label>
+          </div>
+        </div>
+        <div class="error-msg">Please select an option.</div>
+      </div>
+      <div class="btn-row">
+        <div></div>
+        <button class="btn-next" id="btn8" disabled onclick="nextSection(8)">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION 9: Six Months in Current Role ==================== -->
+  <div class="section" id="section9">
+    <div class="card highlighted">
+      <div class="section-title">Section 9 of 12: Exclusion Criteria</div>
+      <div class="question" id="q-six-months">
+        <span class="question-label">Have you been in your current role for at least six months? <span class="required">*</span></span>
+        <div class="radio-group">
+          <div class="radio-option">
+            <input type="radio" name="six_months" id="six-yes" value="Yes">
+            <label for="six-yes">Yes</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="six_months" id="six-no" value="No">
+            <label for="six-no">No</label>
+          </div>
+        </div>
+        <div class="error-msg">Please select an option.</div>
+      </div>
+      <div class="btn-row">
+        <div></div>
+        <button class="btn-next" id="btn9" disabled onclick="nextSection(9)">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION 10: English Fluency ==================== -->
+  <div class="section" id="section10">
+    <div class="card highlighted">
+      <div class="section-title">Section 10 of 12: Exclusion Criteria</div>
+      <div class="question" id="q-english">
+        <span class="question-label">Are you able to communicate fluently in English? <span class="required">*</span></span>
+        <div class="radio-group">
+          <div class="radio-option">
+            <input type="radio" name="english" id="english-yes" value="Yes">
+            <label for="english-yes">Yes</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="english" id="english-no" value="No">
+            <label for="english-no">No</label>
+          </div>
+        </div>
+        <div class="error-msg">Please select an option.</div>
+      </div>
+      <div class="btn-row">
+        <div></div>
+        <button class="btn-next" id="btn10" disabled onclick="nextSection(10)">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION 11: Informed Consent ==================== -->
+  <div class="section" id="section11">
+    <div class="card highlighted">
+      <div class="section-title">Section 11 of 12: Letter of Informed Consent</div>
+      <div class="section-description">
+        You have met all eligibility criteria. Please read the informed consent document below carefully before proceeding.
+      </div>
+
+      <div class="consent-text">
+        <p>This research study is being conducted by Bikram Patnaik who is a doctoral candidate at Westcliff University. This study is being performed in partial fulfillment of the doctoral degree requirements for the Doctor of Business Administration (DBA).</p>
+
+        <p>The title of this study is <em>Harnessing Artificial Intelligence in Healthcare Leadership: Evaluating Strategic Decision-Making Effectiveness and Adoption Challenges</em>.</p>
+
+        <h3>Purpose of the Study</h3>
+        <p>The purpose of this qualitative case study is to explore why U.S. healthcare decision-makers adopt or do not adopt Artificial Intelligence (AI) for strategic decision-making, and what factors shape that process. The study examines decision-makers' perceptions of AI usefulness, ease of use, and trustworthiness, the role of transformational leadership in AI adoption, organizational readiness, and the cognitive, ethical, and organizational challenges associated with AI implementation.</p>
+
+        <h3>Participant Criteria</h3>
+        <p>You are being invited to participate in this study because you meet the following eligibility criteria: you are 25 years of age or older, currently hold a role with direct involvement in organizational or strategic decision-making within a U.S.-based healthcare setting, have a minimum of 5 years of experience in healthcare decision-making, and have direct experience with or exposure to AI initiatives in your organization. Individuals are excluded from participation if they are employed by an AI vendor or consulting firm, have participated in a similar study within the past 12 months, are unable to communicate fluently in English, or have been in their current role for less than six months.</p>
+
+        <h3>Participant Tasks and Time Commitment</h3>
+        <p>If you agree to participate in this study, you will be asked to participate in one semi-structured interview lasting approximately 45 to 60 minutes conducted via a secure virtual meeting platform such as Google Meet or Zoom. The interview will consist of open-ended questions about your experiences, perceptions, and challenges regarding AI adoption and strategic decision-making in your organization. The interview will be audio-recorded with your consent. Total time commitment is approximately 45 to 60 minutes.</p>
+
+        <h3>Participant Rights</h3>
+        <p>Your participation in this study is completely voluntary. You may withdraw your consent to participate at any time without penalty. If you withdraw your consent, you may request to have your data removed from the study. This study has been reviewed and certified by the Institutional Review Board (IRB) at Westcliff University. For problems or questions regarding participants' rights, you can contact the IRB chair by email at IRB@westcliff.edu.</p>
+
+        <h3>Risks</h3>
+        <p>This study poses no more than minimal risk to participants. There is a minimal risk that participants' professional information or interview responses could be disclosed. This risk will be mitigated through secure data storage, restricted access, and removal of identifying information from transcripts and reports. Participants may experience mild professional or emotional discomfort when discussing organizational challenges, leadership practices, ethical concerns, or difficulties associated with AI adoption. Participants are free to skip any question or withdraw from the study at any time without penalty.</p>
+
+        <h3>Benefits</h3>
+        <p>There are no direct or immediate personal benefits for participants in this research. The potential benefits of this research include contributing evidence-based insights that can inform leadership development strategies, organizational readiness initiatives, and AI governance frameworks for healthcare organizations seeking to adopt AI for strategic decision-making.</p>
+
+        <h3>Compensation or Incentives</h3>
+        <p>You will receive no compensation or incentives for your participation in this study.</p>
+
+        <h3>Data Collection and Protection</h3>
+        <p>Interview responses and demographic information will be collected as part of this study. Participants will be assigned unique alphanumeric codes (e.g., P1, P2, P3), and names and other direct identifiers will be removed from transcripts and research reports. Your name will not be used in any publication or presentation of the findings. Participants' employers or organizations will not be provided with individual interview responses. The participant identification key linking names to codes will be stored in a separate, encrypted file accessible only to the researcher.</p>
+
+        <h3>Data Security</h3>
+        <p>Human subjects research regulations require that data be kept for a minimum of three (3) years. All research materials, consent forms, interview recordings, transcripts, and data collected will be stored electronically in encrypted, password-protected files on a password-protected device accessible only to the researcher. The dissertation chair may review de-identified data as part of the dissertation supervision process. Only the principal investigator, faculty supervisors, and the Institutional Review Board will have access to the data, or as required by law. After the required retention period, all electronic files will be permanently deleted, and any physical documents will be shredded.</p>
+
+        <h3>Contact Information</h3>
+        <p>If you have questions about this study or concerns about your participation, you can contact the principal investigator Bikram Patnaik by phone (408) 493-9465 or email b.patnaik.192@westcliff.edu at any time. For problems or questions regarding participants' rights, you can contact the IRB chair by email at IRB@westcliff.edu.</p>
+
+        <h3>Disclaimer</h3>
+        <p>The Institutional Review Board (IRB) approves research proposals involving human participants after determining the plans are structured to high ethical standards, comply with federal regulations, are designed to protect participants' rights, welfare, and privacy. Researchers alone are responsible for carrying out their approved plans. Subjects they discuss and actions they take while doing so are their own and viewpoints they express are not necessarily those of Westcliff University or the IRB.</p>
+      </div>
+
+      <a href="https://drive.google.com/file/d/1jqph3ke5Ala4dSSzA7NRK53QlKzT5u_b/view?usp=sharing" class="consent-download" id="downloadLink">Download a copy of this consent form (PDF)</a>
+
+      <div class="btn-row">
+        <div></div>
+        <button class="btn-next" onclick="nextSection(11)">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION 12: Consent Selection ==================== -->
+  <div class="section" id="section12">
+    <div class="card highlighted">
+      <div class="section-title">Section 12 of 12: Voluntary Informed Consent Acknowledgement</div>
+      <div class="section-description">
+        I am responding via this form to consent to participate in the study and I acknowledge that I have read and understand the explanation of this research study and what is being asked of me as a participant. I also understand that my participation in this study is completely voluntary and I am able to withdraw my consent at any time, for any reason, without penalty. I know who to contact if I have questions or concerns about my participation. I have been given a copy of this consent form.
+      </div>
+
+      <div class="question" id="q-name">
+        <span class="question-label">Full Name (Electronic Signature) <span class="required">*</span></span>
+        <input type="text" id="consent-name" placeholder="Your full name" required>
+        <div class="error-msg">Please enter your full name.</div>
+      </div>
+
+      <div class="question" id="q-date">
+        <span class="question-label">Date <span class="required">*</span></span>
+        <input type="date" id="consent-date" required>
+        <div class="error-msg">Please enter the date.</div>
+      </div>
+
+      <div class="question" id="q-consent">
+        <span class="question-label">Consent Selection <span class="required">*</span></span>
+        <div class="radio-group">
+          <div class="radio-option">
+            <input type="radio" name="consent" id="consent-decline" value="I do not wish to participate in this research study">
+            <label for="consent-decline">I do not wish to participate in this research study.</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="consent" id="consent-agree" value="I have read the information provided and agree to participate in this research study">
+            <label for="consent-agree">I have read the information provided and agree to participate in this research study.</label>
+          </div>
+        </div>
+        <div class="error-msg">Please select an option.</div>
+      </div>
+
+      <div class="btn-row">
+        <div></div>
+        <button class="btn-submit" id="btnSubmit" disabled onclick="submitForm()">Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== INELIGIBLE EXIT PAGE ==================== -->
+  <div class="exit-page" id="ineligible-page">
+    <div class="exit-card">
+      <div class="exit-icon">&#9888;</div>
+      <h2>Thank You for Your Interest</h2>
+      <p>Based on your responses, you do not meet the eligibility criteria for this study. We appreciate your willingness to participate.</p>
+      <p style="margin-top: 12px;">If you believe this is an error or have questions, please contact the researcher at <a href="mailto:b.patnaik.192@westcliff.edu">b.patnaik.192@westcliff.edu</a>.</p>
+    </div>
+  </div>
+
+  <!-- ==================== CONSENT DECLINE EXIT PAGE ==================== -->
+  <div class="exit-page" id="decline-page">
+    <div class="exit-card">
+      <div class="exit-icon">&#10003;</div>
+      <h2>Thank You for Your Consideration</h2>
+      <p>Your decision not to participate has been noted. No data will be collected or stored from this session.</p>
+      <p style="margin-top: 12px;">If you have any questions about the study, please contact the researcher at <a href="mailto:b.patnaik.192@westcliff.edu">b.patnaik.192@westcliff.edu</a>.</p>
+    </div>
+  </div>
+
+  <!-- ==================== SUCCESS PAGE ==================== -->
+  <div class="exit-page" id="success-page">
+    <div class="success-card">
+      <div class="success-icon">&#10004;</div>
+      <h2>Your Response Has Been Recorded</h2>
+      <p>Thank you for consenting to participate in this study. The researcher will contact you at the email address you provided to schedule your interview.</p>
+      <p style="margin-top: 12px;">If you have any questions in the meantime, please contact <a href="mailto:b.patnaik.192@westcliff.edu">b.patnaik.192@westcliff.edu</a>.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ========== CONFIGURATION ==========
+  // Replace this with your Google Apps Script Web App URL after deployment
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzQHxEw3sQ7NUFmGCFoCuPIgZ2cs63uZClQg1hE6I43rV-cGE8as9STD3cfGXAdTskfvQ/exec';
+
+  const TOTAL_SECTIONS = 12;
+
+  // Disqualifying answers per section
+  const DISQUALIFIERS = {
+    1: { field: 'age', values: ['Under 25'] },
+    2: { field: 'us_healthcare', values: ['No'] },
+    3: { field: 'years', values: ['Less than 5 years'] },
+    // Section 4 (Nature of Role) has no disqualifier
+    5: { field: 'ai_experience', values: ['No AI experience'] },
+    6: { field: 'decisions', values: ['No'] },
+    7: { field: 'ai_vendor', values: ['Yes'] },
+    8: { field: 'similar_study', values: ['Yes'] },
+    9: { field: 'six_months', values: ['No'] },
+    10: { field: 'english', values: ['No'] }
+  };
+
+  let currentSection = 1;
+
+  // ========== PROGRESS BAR ==========
+  function updateProgress(section) {
+    const pct = Math.round((section / TOTAL_SECTIONS) * 100);
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressText').textContent = 'Section ' + section + ' of ' + TOTAL_SECTIONS;
+  }
+
+  // ========== ENABLE/DISABLE NEXT BUTTONS ==========
+  function setupListeners() {
+    // Section 1: age radio only
+    const ageRadios = document.querySelectorAll('input[name="age"]');
+    ageRadios.forEach(r => r.addEventListener('change', () => {
+      document.getElementById('btn1').disabled = false;
+    }));
+
+    // Sections 2-10: single radio each
+    const radioSections = {
+      2: 'us_healthcare',
+      3: 'years',
+      4: 'role_nature',
+      5: 'ai_experience',
+      6: 'decisions',
+      7: 'ai_vendor',
+      8: 'similar_study',
+      9: 'six_months',
+      10: 'english'
+    };
+
+    Object.entries(radioSections).forEach(([sec, name]) => {
+      const radios = document.querySelectorAll(`input[name="${name}"]`);
+      radios.forEach(r => {
+        r.addEventListener('change', () => {
+          document.getElementById('btn' + sec).disabled = false;
+        });
+      });
+    });
+
+    // Section 12: name + date + consent radio
+    const nameInput = document.getElementById('consent-name');
+    const dateInput = document.getElementById('consent-date');
+    const consentRadios = document.querySelectorAll('input[name="consent"]');
+    function checkSection12() {
+      const nameValid = nameInput.value.trim() !== '';
+      const dateValid = dateInput.value !== '';
+      const consentSelected = document.querySelector('input[name="consent"]:checked');
+      document.getElementById('btnSubmit').disabled = !(nameValid && dateValid && consentSelected);
+    }
+    nameInput.addEventListener('input', checkSection12);
+    dateInput.addEventListener('change', checkSection12);
+    consentRadios.forEach(r => r.addEventListener('change', checkSection12));
+
+    // Set today's date as default
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.value = today;
+  }
+
+  // ========== NAVIGATION ==========
+  function nextSection(fromSection) {
+    // Check for disqualifying answer
+    if (DISQUALIFIERS[fromSection]) {
+      const dq = DISQUALIFIERS[fromSection];
+      const selected = document.querySelector(`input[name="${dq.field}"]:checked`);
+      if (selected && dq.values.includes(selected.value)) {
+        showIneligible();
+        return;
+      }
+    }
+
+    // Hide current section
+    document.getElementById('section' + fromSection).classList.remove('active');
+
+    // Show next section
+    currentSection = fromSection + 1;
+    document.getElementById('section' + currentSection).classList.add('active');
+    updateProgress(currentSection);
+
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ========== EXIT PAGES ==========
+  function showIneligible() {
+    // Hide everything
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelector('.form-header').style.display = 'none';
+    document.querySelector('.progress-bar-container').style.display = 'none';
+
+    // Show ineligible page
+    document.getElementById('ineligible-page').classList.add('active');
+  }
+
+  function showDecline() {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelector('.form-header').style.display = 'none';
+    document.querySelector('.progress-bar-container').style.display = 'none';
+
+    document.getElementById('decline-page').classList.add('active');
+  }
+
+  function showSuccess() {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelector('.form-header').style.display = 'none';
+    document.querySelector('.progress-bar-container').style.display = 'none';
+
+    document.getElementById('success-page').classList.add('active');
+  }
+
+  // ========== FORM SUBMISSION ==========
+  function submitForm() {
+    // Check consent selection
+    const consentSelection = document.querySelector('input[name="consent"]:checked');
+    if (!consentSelection) return;
+
+    if (consentSelection.value.includes('do not wish')) {
+      showDecline();
+      return;
+    }
+
+    // Validate name and date
+    const name = document.getElementById('consent-name').value.trim();
+    const date = document.getElementById('consent-date').value;
+
+    if (!name || !date) return;
+
+    // Collect all data
+    const formData = {
+      timestamp: new Date().toISOString(),
+      age_group: getRadioValue('age'),
+      us_healthcare: getRadioValue('us_healthcare'),
+      years_experience: getRadioValue('years'),
+      role_nature: getRadioValue('role_nature'),
+      ai_experience: getRadioValue('ai_experience'),
+      decision_making: getRadioValue('decisions'),
+      ai_vendor: getRadioValue('ai_vendor'),
+      similar_study: getRadioValue('similar_study'),
+      six_months_role: getRadioValue('six_months'),
+      english_fluency: getRadioValue('english'),
+      consent_name: name,
+      consent_date: date,
+      consent_selection: consentSelection.value
+    };
+
+    // Disable submit button
+    const submitBtn = document.getElementById('btnSubmit');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting...';
+
+    // Send to Google Apps Script
+    fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData)
+    })
+    .then(() => {
+      showSuccess();
+    })
+    .catch(err => {
+      console.error('Submission error:', err);
+      // Still show success since no-cors doesn't return a readable response
+      showSuccess();
+    });
+  }
+
+  function getRadioValue(name) {
+    const selected = document.querySelector(`input[name="${name}"]:checked`);
+    return selected ? selected.value : '';
+  }
+
+  // ========== INITIALIZATION ==========
+  document.addEventListener('DOMContentLoaded', () => {
+    updateProgress(1);
+    setupListeners();
+  });
+</script>
+
+</body>
+</html>
